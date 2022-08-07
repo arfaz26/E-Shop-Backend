@@ -1,0 +1,3 @@
+export enum CONFIGURATION {
+  MONGO_URL = 'MONGO_URL',
+}
