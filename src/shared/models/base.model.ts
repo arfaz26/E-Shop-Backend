@@ -11,13 +11,13 @@ import { modelOptions, prop, Severity } from '@typegoose/typegoose';
   },
 })
 export abstract class BaseModel {
-  @prop()
-  createdAt: Date;
+  @prop({ default: Date.now(), required: true })
+  createdAt?: Date;
 
-  @prop()
-  updatedAt: Date;
+  @prop({ default: Date.now(), required: true })
+  updatedAt?: Date;
 
-  id: string;
+  id?: string;
 }
 export const schemaOptions = {
   timestamps: true,
