@@ -4,3 +4,7 @@ export enum MESSAGES {
   INVALID_CREDENTIALS = 'Invalid username or password',
   UNAUTHORIZED = 'You are not Authorized to access this resource',
 }
+
+export enum SUCCESS_MESSAGES {
+  FORGOT_PASSWORD = 'Link to reset your password is sent to your registered email',
+}

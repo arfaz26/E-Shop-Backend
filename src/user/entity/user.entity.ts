@@ -58,6 +58,10 @@ export class UserEntity {
     return compare(password, this.password);
   }
 
+  get fullName() {
+    return `${this.firstName} ${this.lastName}`;
+  }
+
   static toEntity(response: DocumentType<User>) {
     const responseAsJson = response?.toJSON
       ? response.toJSON({ flattenMaps: true })

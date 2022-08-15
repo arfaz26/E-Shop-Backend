@@ -30,6 +30,9 @@ class User extends BaseModel {
   })
   address?: Address[];
 
+  @prop({ required: false })
+  resetPasswordToken?: string;
+
   static get model(): ModelType<User> {
     return getModelForClass(User, {
       schemaOptions: Object.assign({}, schemaOptions, {
