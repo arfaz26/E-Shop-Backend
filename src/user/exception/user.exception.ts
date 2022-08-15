@@ -20,3 +20,9 @@ export class InvalidCredentialsError extends ValidationError {
     super(ERROR_CODES.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED);
   }
 }
+
+export class UnAuthorizedError extends ValidationError {
+  constructor() {
+    super(ERROR_CODES.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);
+  }
+}

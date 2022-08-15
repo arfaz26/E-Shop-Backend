@@ -45,6 +45,9 @@ export class UserEntity {
     if (user.address) {
       this.address = AddressEntity.toEntityArray(user.address);
     }
+    if (user.mobile) {
+      this.mobile = PhoneNumberEntity.toEntity(user.mobile);
+    }
   }
 
   static async generateHashedPassword(password: string): Promise<string> {

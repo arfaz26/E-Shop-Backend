@@ -68,4 +68,9 @@ export class UserService {
     const token = this.authService.sign({ id: user.id });
     return { user, token };
   }
+
+  async validateUser(id: string): Promise<UserEntity> {
+    const user = await this.userRepository.findById(id);
+    return user ? UserEntity.toEntity(user) : null;
+  }
 }
