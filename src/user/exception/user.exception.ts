@@ -26,3 +26,15 @@ export class UnAuthorizedError extends ValidationError {
     super(ERROR_CODES.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);
   }
 }
+
+export class InvalidPasswordError extends ValidationError {
+  constructor() {
+    super(ERROR_CODES.INVALID_PASSWORD, HttpStatus.BAD_REQUEST);
+  }
+}
+
+export class NewPasswordMismatchError extends ValidationError {
+  constructor() {
+    super(ERROR_CODES.NEW_PASSWORD_MISMATCH, HttpStatus.BAD_REQUEST);
+  }
+}
