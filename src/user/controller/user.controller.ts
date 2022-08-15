@@ -1,11 +1,21 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Put,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGaurd } from 'shared/auth/guard/jwt-auth.guard';
 import { Serialize } from 'shared/decorators/serialize.decorator';
 import { CreateUserRequestDto } from 'user/dto/request/create-user-request.dto';
 import { LoginUserRequestDto } from 'user/dto/request/login-user-request.dto';
+import { UpdateUserRequestDto } from 'user/dto/request/update-user-request.dto';
 import { CreateUserResponseDto } from 'user/dto/response/create-user-response.dto';
 import { GetMyProfileResponseDto } from 'user/dto/response/get-my-profile-response.dto';
 import { LoginUserResponseDto } from 'user/dto/response/login-user-response.dto';
+import { UpdateUserResponseDto } from 'user/dto/response/update-user-response.dto';
 import { UserService } from 'user/service/user.service';
 
 @Controller('users')
@@ -34,5 +44,20 @@ export class UserController {
   async getMyProfile(@Req() req) {
     const { user } = req;
     return user;
+  }
+
+  @Put('me')
+  @UseGuards(JwtAuthGaurd)
+  @Serialize(UpdateUserResponseDto)
+  async updateProfile(
+    @Req() req,
+    @Body() updateUserAttributes: UpdateUserRequestDto,
+  ) {
+    const { user } = req;
+    const updatedUser = await this.userService.updateUser(
+      user.id,
+      updateUserAttributes,
+    );
+    return updatedUser;
   }
 }

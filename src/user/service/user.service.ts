@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AuthService } from 'shared/auth/auth.service';
 import { CreateUserRequestDto } from 'user/dto/request/create-user-request.dto';
 import { LoginUserRequestDto } from 'user/dto/request/login-user-request.dto';
+import { UpdateUserRequestDto } from 'user/dto/request/update-user-request.dto';
 import { CreateUserResponseDto } from 'user/dto/response/create-user-response.dto';
 import { UserEntity } from 'user/entity/user.entity';
 import {
@@ -67,6 +68,14 @@ export class UserService {
     }
     const token = this.authService.sign({ id: user.id });
     return { user, token };
+  }
+
+  async updateUser(id: string, updateUserAttributes: UpdateUserRequestDto) {
+    const updatedUser = await this.userRepository.updateById(
+      id,
+      updateUserAttributes,
+    );
+    return UserEntity.toEntity(updatedUser);
   }
 
   async validateUser(id: string): Promise<UserEntity> {
