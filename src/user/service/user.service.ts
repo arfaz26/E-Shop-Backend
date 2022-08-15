@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AuthService } from 'shared/auth/auth.service';
+import { generateUid } from 'shared/utils/utils';
 import { CreateUserRequestDto } from 'user/dto/request/create-user-request.dto';
 import { LoginUserRequestDto } from 'user/dto/request/login-user-request.dto';
 import { UpdateUserRequestDto } from 'user/dto/request/update-user-request.dto';
@@ -76,6 +77,15 @@ export class UserService {
       updateUserAttributes,
     );
     return UserEntity.toEntity(updatedUser);
+  }
+
+  async forgotPassword(email: string) {
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+    const resetPasswordToken = generateUid();
+    await this.userRepository.updateById(user.id, { resetPasswordToken });
   }
 
   async validateUser(id: string): Promise<UserEntity> {

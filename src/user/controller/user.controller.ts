@@ -9,7 +9,10 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGaurd } from 'shared/auth/guard/jwt-auth.guard';
 import { Serialize } from 'shared/decorators/serialize.decorator';
+import { SUCCESS_CODES } from 'shared/enums/success-code.enum';
+import { SucessResponse } from 'shared/response/success-response';
 import { CreateUserRequestDto } from 'user/dto/request/create-user-request.dto';
+import { ForgotPasswordRequestDto } from 'user/dto/request/forgot-password-request.dto';
 import { LoginUserRequestDto } from 'user/dto/request/login-user-request.dto';
 import { UpdateUserRequestDto } from 'user/dto/request/update-user-request.dto';
 import { CreateUserResponseDto } from 'user/dto/response/create-user-response.dto';
@@ -59,5 +62,11 @@ export class UserController {
       updateUserAttributes,
     );
     return updatedUser;
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() { email }: ForgotPasswordRequestDto) {
+    await this.userService.forgotPassword(email);
+    return new SucessResponse(SUCCESS_CODES.FORGOT_PASSWORD, true);
   }
 }

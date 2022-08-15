@@ -1,0 +1,3 @@
+export enum SUCCESS_CODES {
+  FORGOT_PASSWORD = 'FORGOT_PASSWORD',
+}
