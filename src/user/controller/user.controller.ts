@@ -15,6 +15,7 @@ import { SucessResponse } from 'shared/response/success-response';
 import { CreateUserRequestDto } from 'user/dto/request/create-user-request.dto';
 import { ForgotPasswordRequestDto } from 'user/dto/request/forgot-password-request.dto';
 import { LoginUserRequestDto } from 'user/dto/request/login-user-request.dto';
+import { UpdatePasswordRequestDto } from 'user/dto/request/update-password-request.dto';
 import { UpdateUserRequestDto } from 'user/dto/request/update-user-request.dto';
 import { CreateUserResponseDto } from 'user/dto/response/create-user-response.dto';
 import { GetMyProfileResponseDto } from 'user/dto/response/get-my-profile-response.dto';
@@ -72,5 +73,16 @@ export class UserController {
   ) {
     await this.userService.forgotPassword(email, req);
     return new SucessResponse(SUCCESS_CODES.FORGOT_PASSWORD, true);
+  }
+
+  @Put('update-password')
+  @UseGuards(JwtAuthGaurd)
+  async updatePassword(
+    @Req() req,
+    @Body() updatePasswordAttributes: UpdatePasswordRequestDto,
+  ) {
+    const { user } = req;
+    await this.userService.updatePassword(user, updatePasswordAttributes);
+    return new SucessResponse(SUCCESS_CODES.UPDATE_PASSWORD_SUCCESSFUL, true);
   }
 }
