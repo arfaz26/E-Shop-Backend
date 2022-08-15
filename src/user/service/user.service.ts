@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AuthService } from 'shared/auth/auth.service';
 import { CreateUserRequestDto } from 'user/dto/request/create-user-request.dto';
 import { LoginUserRequestDto } from 'user/dto/request/login-user-request.dto';
 import { CreateUserResponseDto } from 'user/dto/response/create-user-response.dto';
@@ -12,7 +13,10 @@ import { UserRepository } from 'user/repository/user.repository';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly authService: AuthService,
+  ) {}
 
   async signup(
     createUserAttributes: CreateUserRequestDto,
@@ -24,7 +28,8 @@ export class UserService {
       throw new EmailAlreadyExistsError();
     }
     const createdUser = await this.createUser(createUserAttributes);
-    return { user: createdUser };
+    const token = this.authService.sign({ id: createdUser.id });
+    return { user: createdUser, token };
   }
 
   async hashPassword(password: string): Promise<string> {
@@ -60,6 +65,7 @@ export class UserService {
     if (!isPasswordMatched) {
       throw new InvalidCredentialsError();
     }
-    return { user };
+    const token = this.authService.sign({ id: user.id });
+    return { user, token };
   }
 }
