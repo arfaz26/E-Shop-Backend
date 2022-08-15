@@ -3,7 +3,7 @@ import { Exclude, Expose, Type } from 'class-transformer';
 import { AddressEntity } from 'shared/entity/address.entity';
 import { PhoneNumberEntity } from 'shared/entity/phone-number.entity';
 import User from 'user/schema/user.schema';
-import { genSalt, hash } from 'bcrypt';
+import { genSalt, hash, compare } from 'bcrypt';
 
 export class UserEntity {
   @Expose()
@@ -50,6 +50,9 @@ export class UserEntity {
   static async generateHashedPassword(password: string): Promise<string> {
     const salt = await genSalt(10);
     return hash(password, salt);
+  }
+  async comparePassword(password: string): Promise<boolean> {
+    return compare(password, this.password);
   }
 
   static toEntity(response: DocumentType<User>) {

@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserRequestDto } from 'user/dto/request/create-user-request.dto';
+import { LoginUserRequestDto } from 'user/dto/request/login-user-request.dto';
 import { CreateUserResponseDto } from 'user/dto/response/create-user-response.dto';
 import { UserEntity } from 'user/entity/user.entity';
-import { EmailAlreadyExistsError } from 'user/exception/user.exception';
+import {
+  EmailAlreadyExistsError,
+  InvalidCredentialsError,
+  UserNotFoundError,
+} from 'user/exception/user.exception';
 import { UserRepository } from 'user/repository/user.repository';
 
 @Injectable()
@@ -36,5 +41,25 @@ export class UserService {
       password,
     });
     return UserEntity.toEntity(user);
+  }
+
+  async login(loginUserAttributes: LoginUserRequestDto) {
+    loginUserAttributes.email = loginUserAttributes.email.toLowerCase();
+    const user = await this.userRepository.findByEmail(
+      loginUserAttributes.email,
+    );
+
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+
+    const isPasswordMatched = await user.comparePassword(
+      loginUserAttributes.password,
+    );
+
+    if (!isPasswordMatched) {
+      throw new InvalidCredentialsError();
+    }
+    return { user };
   }
 }
