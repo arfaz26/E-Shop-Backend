@@ -38,3 +38,9 @@ export class NewPasswordMismatchError extends ValidationError {
     super(ERROR_CODES.NEW_PASSWORD_MISMATCH, HttpStatus.BAD_REQUEST);
   }
 }
+
+export class InvalidResetPasswordUrlError extends ValidationError {
+  constructor() {
+    super(ERROR_CODES.RESET_PASSWORD_LINK_EXPIRED, HttpStatus.BAD_REQUEST);
+  }
+}

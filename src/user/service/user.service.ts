@@ -5,6 +5,7 @@ import { MailerService } from 'shared/mail/service/mailer.service';
 import { generateUid } from 'shared/utils/utils';
 import { CreateUserRequestDto } from 'user/dto/request/create-user-request.dto';
 import { LoginUserRequestDto } from 'user/dto/request/login-user-request.dto';
+import { ResetPasswordRequestDto } from 'user/dto/request/reset-password-request.dto';
 import { UpdatePasswordRequestDto } from 'user/dto/request/update-password-request.dto';
 import { UpdateUserRequestDto } from 'user/dto/request/update-user-request.dto';
 import { CreateUserResponseDto } from 'user/dto/response/create-user-response.dto';
@@ -13,6 +14,7 @@ import {
   EmailAlreadyExistsError,
   InvalidCredentialsError,
   InvalidPasswordError,
+  InvalidResetPasswordUrlError,
   NewPasswordMismatchError,
   UserNotFoundError,
 } from 'user/exception/user.exception';
@@ -97,6 +99,26 @@ export class UserService {
       this.generateResetPasswordUrl(req, resetPasswordToken),
     );
     await this.userRepository.updateById(user.id, { resetPasswordToken });
+  }
+
+  async resetPassword(
+    resetPasswordToken: string,
+    resetPasswordAttributes: ResetPasswordRequestDto,
+  ) {
+    const { password, confirmPassword } = resetPasswordAttributes;
+    const user = await this.userRepository.findOne({ resetPasswordToken });
+
+    if (!user) {
+      throw new InvalidResetPasswordUrlError();
+    }
+    if (password !== confirmPassword) {
+      throw new NewPasswordMismatchError();
+    }
+    const hashedPassword = await this.hashPassword(password);
+    await this.userRepository.updateById(user.id, {
+      password: hashedPassword,
+      $unset: { resetPasswordToken: '' },
+    });
   }
 
   async updatePassword(

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Put,
   Req,
@@ -15,6 +16,7 @@ import { SucessResponse } from 'shared/response/success-response';
 import { CreateUserRequestDto } from 'user/dto/request/create-user-request.dto';
 import { ForgotPasswordRequestDto } from 'user/dto/request/forgot-password-request.dto';
 import { LoginUserRequestDto } from 'user/dto/request/login-user-request.dto';
+import { ResetPasswordRequestDto } from 'user/dto/request/reset-password-request.dto';
 import { UpdatePasswordRequestDto } from 'user/dto/request/update-password-request.dto';
 import { UpdateUserRequestDto } from 'user/dto/request/update-user-request.dto';
 import { CreateUserResponseDto } from 'user/dto/response/create-user-response.dto';
@@ -73,6 +75,18 @@ export class UserController {
   ) {
     await this.userService.forgotPassword(email, req);
     return new SucessResponse(SUCCESS_CODES.FORGOT_PASSWORD, true);
+  }
+
+  @Put('reset-password/:resetPasswordToken')
+  async resetPassword(
+    @Param() params,
+    @Body() resetPasswordAttributes: ResetPasswordRequestDto,
+  ) {
+    await this.userService.resetPassword(
+      params.resetPasswordToken,
+      resetPasswordAttributes,
+    );
+    return new SucessResponse(SUCCESS_CODES.RESET_PASSWORD_SUCCESSFUL, true);
   }
 
   @Put('update-password')
