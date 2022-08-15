@@ -7,6 +7,7 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { JwtAuthGaurd } from 'shared/auth/guard/jwt-auth.guard';
 import { Serialize } from 'shared/decorators/serialize.decorator';
 import { SUCCESS_CODES } from 'shared/enums/success-code.enum';
@@ -65,8 +66,11 @@ export class UserController {
   }
 
   @Post('forgot-password')
-  async forgotPassword(@Body() { email }: ForgotPasswordRequestDto) {
-    await this.userService.forgotPassword(email);
+  async forgotPassword(
+    @Req() req: Request,
+    @Body() { email }: ForgotPasswordRequestDto,
+  ) {
+    await this.userService.forgotPassword(email, req);
     return new SucessResponse(SUCCESS_CODES.FORGOT_PASSWORD, true);
   }
 }

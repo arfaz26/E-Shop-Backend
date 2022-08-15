@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { Request } from 'express';
 import { AuthService } from 'shared/auth/auth.service';
+import { MailerService } from 'shared/mail/service/mailer.service';
 import { generateUid } from 'shared/utils/utils';
 import { CreateUserRequestDto } from 'user/dto/request/create-user-request.dto';
 import { LoginUserRequestDto } from 'user/dto/request/login-user-request.dto';
@@ -18,6 +20,7 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly authService: AuthService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async signup(
@@ -79,17 +82,28 @@ export class UserService {
     return UserEntity.toEntity(updatedUser);
   }
 
-  async forgotPassword(email: string) {
+  async forgotPassword(email: string, req: Request) {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
       throw new UserNotFoundError();
     }
     const resetPasswordToken = generateUid();
+    await this.mailerService.sendResetPasswordMail(
+      user.email,
+      user.fullName,
+      this.generateResetPasswordUrl(req, resetPasswordToken),
+    );
     await this.userRepository.updateById(user.id, { resetPasswordToken });
   }
 
   async validateUser(id: string): Promise<UserEntity> {
     const user = await this.userRepository.findById(id);
     return user ? UserEntity.toEntity(user) : null;
+  }
+
+  generateResetPasswordUrl(req: Request, resetPasswordToken: string) {
+    return `${req.protocol}://${req.get(
+      'Host',
+    )}/api/users/reset-password/${resetPasswordToken}`;
   }
 }
